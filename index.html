@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Guessing Game</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin-top: 50px;
+    }
+
+    input, button {
+      margin-top: 10px;
+      font-size: 16px;
+      padding: 5px;
+    }
+  </style>
+  <script src="hereitis.js"></script>
+</head>
+<body>
+
+  <h1>Word Guessing Game</h1>
+  <p>Try to guess the hidden word. You have 13 attempts.</p>
+  <p id="wordDisplay"></p>
+  <input type="text" id="guessInput" placeholder="Enter your guess" />
+  <button onclick="checkGuess()">Submit Guess</button>
+  <p id="message"></p>
+
+  <script>
+    // Array of words for the game
+    //const words = ['party', 'Kaiser Wilhelm', 'buchanan', 'Daisy', 'Nick', 'Tom', 'Gatsby','Myrtle',''];
+    const words = f;
+
+    // Select a random word from the array
+    const targetWord = words[Math.floor(Math.random() * words.length)];
+
+    // Convert the word into an array of characters
+    const wordArray = targetWord.split('');
+
+    // Array to track correct guesses
+    const correctGuesses = new Array(wordArray.length).fill(false);
+
+    // Maximum number of attempts
+    const maxAttempts = 13;
+    let remainingAttempts = maxAttempts;
+
+    function displayWord() {
+      const wordDisplay = document.getElementById('wordDisplay');
+      wordDisplay.textContent = correctGuesses.map((value, index) => (value ? wordArray[index] : '_')).join(' ');
+    }
+
+    function checkGuess() {
+      const guessInput = document.getElementById('guessInput');
+      const message = document.getElementById('message');
+      const userGuess = guessInput.value.toLowerCase();
+
+      if (!userGuess.match(/^[a-z]$/) || userGuess.length !== 1) {
+        message.textContent = 'Please enter a valid single letter.';
+        return;
+      }
+
+      if (wordArray.includes(userGuess)) {
+        // Update correctGuesses array with the correct guess
+        wordArray.forEach((letter, index) => {
+          if (letter === userGuess) {
+            correctGuesses[index] = true;
+          }
+        });
+
+        // Check if the player has won
+        if (!correctGuesses.includes(false)) {
+          message.textContent = `Congratulations! You guessed the word: ${targetWord}.`;
+          disableInputAndButton();
+        } else {
+          message.textContent = 'Good guess! Keep going.';
+          displayWord();
+        }
+      } else {
+        remainingAttempts--;
+        message.textContent = `Incorrect guess. ${remainingAttempts} attempts remaining.`;
+        if (remainingAttempts === 0) {
+          message.textContent = `Sorry, you're out of attempts. The correct word was: ${targetWord}.`;
+          disableInputAndButton();
+        }
+      }
+
+      guessInput.value = '';
+      guessInput.focus();
+    }
+
+    function disableInputAndButton() {
+      const guessInput = document.getElementById('guessInput');
+      const submitButton = document.querySelector('button');
+
+      guessInput.disabled = true;
+      submitButton.disabled = true;
+    }
+
+    // Display the initial state of the word
+    displayWord();
+  </script>
+
+</body>
+</html>
